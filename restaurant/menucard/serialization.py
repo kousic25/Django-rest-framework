@@ -6,12 +6,10 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
-
 class MenuItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuItem
         fields = '__all__'
-
 
 class MenuItemOptionSerializer(serializers.ModelSerializer):
     class Meta:
