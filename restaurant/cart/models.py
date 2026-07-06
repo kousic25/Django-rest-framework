@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from restaurant.menucard.models import MenuItem 
+from menucard.models import MenuItem
 User = get_user_model()
 
 class CartItem(models.Model):

@@ -37,10 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user_and_address', 
+    'users_address', 
     'menucard',
     'cart',
-    'orders_checkout',
+    'orders_checkouts',
     'reviews',
     'rest_framework',
 ]

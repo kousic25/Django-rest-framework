@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class MenucardConfig(AppConfig):
+class MenucarddConfig(AppConfig):
     name = 'menucard'
