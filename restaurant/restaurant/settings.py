@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os 
+from dotenv import load_dotenv
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,11 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2lic-hph_i8p=@9#xti8x(gn0+5a4%&9^=0-!murghptuyn=lo'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG = os.getenv('DEBUG') == "True"
 ALLOWED_HOSTS = []
 
 
@@ -44,6 +46,16 @@ INSTALLED_APPS = [
     'reviews',
     'rest_framework',
 ]
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES':
+     (
+    
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+
+}
 
 
 MIDDLEWARE = [
@@ -81,12 +93,12 @@ WSGI_APPLICATION = 'restaurant.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'student_django',
-        'USER': 'root',
-        'PASSWORD': 'kousic2005',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE':os.getenv('DATABASE_ENGINE'),
+        'NAME': os.getenv('NAME'),
+        'USER': os.getenv('USER'),
+        'PASSWORD': os.getenv('PASSWORD'),
+        'HOST': os.getenv('HOST'),
+        'PORT': os.getenv('PORT'),
     }
 }
 
