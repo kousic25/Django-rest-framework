@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'orders_checkouts',
     'reviews',
     'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 REST_FRAMEWORK = {
@@ -138,3 +139,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+AUTH_USER_MODEL = "users_address.User"
