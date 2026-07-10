@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -44,7 +45,7 @@ class RegisterView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-    
+
 class LoginView(APIView):
 
     def post(self, request):
@@ -83,8 +84,64 @@ class LoginView(APIView):
             )
 
         return Response(
+            { "message": "Invalid Username or Password" },
+            status=status.HTTP_401_UNAUTHORIZED )
+
+class EmailVerificationView(APIView):
+
+    def post(self, request):
+
+        email = request.data.get("email")
+
+        if not email:
+            return Response(
+                {
+                    "message": "Email is required"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if User.objects.filter(email=email).exists():
+            return Response(
+                {
+                    "message": "Email already exists",
+                    "available": False
+                },
+                status=status.HTTP_200_OK
+            )
+
+        return Response(
             {
-                "message": "Invalid Username or Password"
+                "message": "Email is available",
+                "available": True
             },
-            status=status.HTTP_401_UNAUTHORIZED
+            status=status.HTTP_200_OK
         )
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        try:
+            refresh_token = request.data.get("refresh_token")
+
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(
+                {
+                    "message": "Logout Successful"
+                },
+                status=status.HTTP_205_RESET_CONTENT
+            )
+
+        except Exception:
+            return Response(
+                {
+                    "message": "Invalid or Expired Refresh Token"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
