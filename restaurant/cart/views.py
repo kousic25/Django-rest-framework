@@ -11,8 +11,7 @@ class CartItemListCreateView(generics.ListCreateAPIView):
         return CartItem.objects.filter(username=self.request.user.username)
 
     def perform_create(self, serializer):
-        serializer.save(username=self.request.user.username)
-
+        serializer.save(user=self.request.user)
 class CartItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CartItemSerializer
     permission_classes = [IsAuthenticated]
