@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from .models import CartItem
 
+
 class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
-        fields = '__all__'
+        fields = ['id', 'menu_item', 'quantity', 'updated_at']
         read_only_fields = ['id', 'updated_at']

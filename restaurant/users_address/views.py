@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -8,23 +8,52 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User, UserAddress
 from .serialize import UserSerializer, UserAddressSerializer
 
+
 class UserListCreateView(generics.ListCreateAPIView):
-    queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Show only the logged-in user's profile
+        return User.objects.filter(id=self.request.user.id)
+
 
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # User can retrieve/update/delete only their own profile
+        return User.objects.filter(id=self.request.user.id)
+
+
 
 class UserAddressListCreateView(generics.ListCreateAPIView):
-    queryset = UserAddress.objects.all()
     serializer_class = UserAddressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Show only the logged-in user's addresses
+        return UserAddress.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Automatically assign the logged-in user
+        serializer.save(user=self.request.user)
+
 
 class UserAddressDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = UserAddress.objects.all()
     serializer_class = UserAddressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # User can access only their own addresses
+        return UserAddress.objects.filter(user=self.request.user)
+
+
+
 
 class RegisterView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
 
@@ -46,7 +75,10 @@ class RegisterView(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+
+
 class LoginView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
 
@@ -65,11 +97,8 @@ class LoginView(APIView):
             return Response(
                 {
                     "message": "Login Successful",
-
                     "access_token": str(refresh.access_token),
-
                     "refresh_token": str(refresh),
-
                     "user": {
                         "id": user.id,
                         "username": user.username,
@@ -84,10 +113,13 @@ class LoginView(APIView):
             )
 
         return Response(
-            { "message": "Invalid Username or Password" },
-            status=status.HTTP_401_UNAUTHORIZED )
+            {"message": "Invalid Username or Password"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
 
 class EmailVerificationView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
 
@@ -118,6 +150,8 @@ class EmailVerificationView(APIView):
             status=status.HTTP_200_OK
         )
 
+
+
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -143,5 +177,3 @@ class LogoutView(APIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-
