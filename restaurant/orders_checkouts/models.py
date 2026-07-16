@@ -26,8 +26,7 @@ class Order(models.Model):
         return f"Order {self.id} - {self.user.username}"
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    menu_item_id = models.UUIDField()  # Directly maps to your menu service/app UUID
     quantity = models.PositiveIntegerField(default=1)
-    historical_price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     def __str__(self):
         return f"{self.quantity}x Item {self.menu_item_id} (Order {self.order.id})"
