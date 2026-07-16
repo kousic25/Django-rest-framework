@@ -8,36 +8,28 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User, UserAddress
 from .serialize import UserSerializer, UserAddressSerializer
 
-
 class UserListCreateView(generics.ListCreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Show only the logged-in user's profile
         return User.objects.filter(id=self.request.user.id)
-
 
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # User can retrieve/update/delete only their own profile
         return User.objects.filter(id=self.request.user.id)
-
-
 
 class UserAddressListCreateView(generics.ListCreateAPIView):
     serializer_class = UserAddressSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Show only the logged-in user's addresses
         return UserAddress.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        # Automatically assign the logged-in user
         serializer.save(user=self.request.user)
 
 
@@ -46,11 +38,7 @@ class UserAddressDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # User can access only their own addresses
         return UserAddress.objects.filter(user=self.request.user)
-
-
-
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -74,8 +62,6 @@ class RegisterView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-
-
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -117,7 +103,6 @@ class LoginView(APIView):
             status=status.HTTP_401_UNAUTHORIZED
         )
 
-
 class EmailVerificationView(APIView):
     permission_classes = [AllowAny]
 
@@ -149,8 +134,6 @@ class EmailVerificationView(APIView):
             },
             status=status.HTTP_200_OK
         )
-
-
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]

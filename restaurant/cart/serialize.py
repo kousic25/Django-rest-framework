@@ -5,5 +5,4 @@ from .models import CartItem
 class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
-        fields = ['id', 'user', 'menu_item', 'quantity']
-        read_only_fields = ['user']
+        fields = ['id', 'menu_item', 'quantity']
